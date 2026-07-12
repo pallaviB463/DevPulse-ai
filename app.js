@@ -1,24 +1,22 @@
-require("dotenv").config();
+const app = require("./config/slack");
 
-const { App } = require("@slack/bolt");
+const { handleMessage } = require("./handlers/messageHandler");
 
-const app = new App({
-    token: process.env.SLACK_BOT_TOKEN,
-    signingSecret: process.env.SLACK_SIGNING_SECRET,
-    socketMode: true,
-    appToken: process.env.SLACK_APP_TOKEN
-});
+// Listen to all user messages
+app.message(async ({ message, say }) => {
 
-app.message("hello", async ({ message, say }) => {
-    await say(
-        `👋 Hello <@${message.user}>!\n\nWelcome to *DevPulse AI* 🚀`
-    );
+    if (message.subtype) return;
+
+    await handleMessage({ message, say });
+
 });
 
 (async () => {
-    await app.start(process.env.PORT || 3000);
+
+    await app.start();
 
     console.log("================================");
     console.log("🚀 DevPulse AI Started");
     console.log("================================");
+
 })();

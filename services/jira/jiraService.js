@@ -10,7 +10,15 @@ const api = axios.create({
         Accept: "application/json"
     }
 });
+async function getMyProfile() {
+
+    const response = await api.get("/rest/api/3/myself");
+
+    return response.data;
+
+}
 
 module.exports = {
-    api
+    getMyProfile
 };
+

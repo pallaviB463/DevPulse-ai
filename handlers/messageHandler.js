@@ -6,6 +6,7 @@ const { routeRequest } = require("../services/ai/router");
 const { executeMCP } = require("../services/mcp/router");
 const { askAI } = require("../services/ai/provider");
 const { handleGitHubCommand } = require("./githubHandler");
+const { handleJiraCommand } = require("./jiraHandler");
 
 
 async function handleMessage({ message, say }) {
@@ -43,7 +44,7 @@ async function handleMessage({ message, say }) {
 
         switch (request.type) {
 
-            case "github":
+            case "github":{
 
                 const handled = await handleGitHubCommand(text.toLowerCase(), say);
 
@@ -54,25 +55,33 @@ async function handleMessage({ message, say }) {
                 }
 
                 break;
-            
+            }
 
-            case "jira":
+            case "jira":{
 
-                await say("🎫 Jira integration coming soon.");
+                const handled = await handleJiraCommand(text, say);
+
+                if (!handled) {
+                    await say("📋 Jira command not recognized.");
+                }
 
                 break;
-
-            default:
+            }
+            default:{
 
                 const reply = await askAI(request.prompt);
 
                 await say(reply);
+            }
 
         }
     } catch (err) {
 
     console.error("========== ERROR ==========");
     console.error(err);
+    console.error(err.response?.data);
+    console.error(err.message);
+    console.error("===========================");
     console.error(err.stack);
 
     await say("❌ Sorry, I couldn't contact the AI service.");

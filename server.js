@@ -2,16 +2,16 @@ require("dotenv").config();
 const healthRoute = require("./routes/health");
 const express = require("express");
 const githubRoute = require("./routes/github");
-const jiraRoute = require("./routes/jira");
 const aiRoute = require("./routes/ai");
 const mcpRoute = require("./routes/mcp");
+const jiraRoutes = require("./routes/jira");
 
 const app = express();
 
 app.use(express.json());
 app.use("/health", healthRoute);
 app.use("/github", githubRoute);
-app.use("/jira", jiraRoute);
+app.use("/jira", jiraRoutes);
 app.use("/ai", aiRoute);
 app.use("/mcp", mcpRoute);
 

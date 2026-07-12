@@ -2,15 +2,25 @@ const express = require("express");
 
 const router = express.Router();
 
-router.get("/", (req, res) => {
+const { getMyProfile } = require("../services/jira/jiraService");
 
-    res.json({
+router.get("/profile", async (req, res) => {
 
-        service: "Jira",
+    try {
 
-        status: "Coming Soon"
+        const profile = await getMyProfile();
 
-    });
+        res.json(profile);
+
+    } catch (err) {
+
+        console.error(err.response?.data || err.message);
+
+        res.status(500).json({
+            error: "Unable to contact Jira"
+        });
+
+    }
 
 });
 

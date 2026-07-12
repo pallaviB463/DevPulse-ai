@@ -1,41 +1,39 @@
+const routes = [
+
+    {
+        keywords: ["github", "repo", "repository", "commit", "pull", "issue"],
+        type: "github"
+    },
+
+    {
+        keywords: ["jira", "ticket", "sprint", "epic"],
+        type: "jira"
+    }
+
+];
+
 async function routeRequest(message) {
 
-    const text = message.trim().toLowerCase();
+    const text = message.toLowerCase();
 
-    // Filesystem
-    if (text.startsWith("explain ")) {
+    for (const route of routes) {
 
-        const filename = message.substring(8).trim();
+        if (route.keywords.some(word => text.includes(word))) {
 
-        return {
-            type: "filesystem",
-            filename
-        };
+            return {
+                type: route.type,
+                prompt: message
+            };
+
+        }
+
     }
 
-    // GitHub
-    if (text.startsWith("github")) {
-
-        return {
-            type: "github",
-            query: message
-        };
-    }
-
-    // Jira
-    if (text.startsWith("jira")) {
-
-        return {
-            type: "jira",
-            query: message
-        };
-    }
-
-    // Default AI
     return {
         type: "ai",
         prompt: message
     };
+
 }
 
 module.exports = {

@@ -4,7 +4,8 @@ const router = express.Router();
 const {
     getProfile,
     getRepositories,
-    getCommits
+    getCommits,
+    getPullRequests
 } = require("../services/github/githubService");
 
 
@@ -27,6 +28,7 @@ router.get("/profile", async (req, res) => {
     }
 
 });
+
 router.get("/repos", async (req, res) => {
 
     try {
@@ -56,6 +58,7 @@ router.get("/repos", async (req, res) => {
     }
 
 });
+
 router.get("/commits/:repo", async (req, res) => {
 
     try {
@@ -82,6 +85,36 @@ router.get("/commits/:repo", async (req, res) => {
 
         res.status(500).json({
             error: "Unable to fetch commits"
+        });
+
+    }
+
+});
+router.get("/pulls/:owner/:repo", async (req, res) => {
+
+    try {
+
+        const { owner, repo } = req.params;
+
+        const pulls = await getPullRequests(owner, repo);
+
+        const simplified = pulls.map(pr => ({
+            number: pr.number,
+            title: pr.title,
+            author: pr.user.login,
+            state: pr.state,
+            created_at: pr.created_at,
+            url: pr.html_url
+        }));
+
+        res.json(simplified);
+
+    } catch (err) {
+
+        console.error(err.response?.data || err.message);
+
+        res.status(500).json({
+            error: "Unable to fetch pull requests"
         });
 
     }

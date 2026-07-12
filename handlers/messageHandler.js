@@ -1,7 +1,12 @@
+const { getRepositories,getProfile,getCommits } = require("../services/github/githubService");
+const { formatRepositories,formatProfile,formatCommits } = require("../utils/githubFormatter");
 const { formatSlackMessage } = require("../utils/formatter");
 const handleCommand = require("./commandHandler");
 const { routeRequest } = require("../services/ai/router");
 const { executeMCP } = require("../services/mcp/router");
+const { askAI } = require("../services/ai/provider");
+const { handleGitHubCommand } = require("./githubHandler");
+
 
 async function handleMessage({ message, say }) {
 
@@ -36,14 +41,44 @@ async function handleMessage({ message, say }) {
 
         }
 
-        const result = await executeMCP(request);
+        switch (request.type) {
 
-        await say(result);
+            case "github":
+
+                const handled = await handleGitHubCommand(text.toLowerCase(), say);
+
+                if (!handled) {
+
+                    await say("🐙 GitHub command not recognized.");
+
+                }
+
+                break;
+            
+
+            case "jira":
+
+                await say("🎫 Jira integration coming soon.");
+
+                break;
+
+            default:
+
+                const reply = await askAI(request.prompt);
+
+                await say(reply);
+
+        }
     } catch (err) {
-        console.error(err);
-        await say("❌ Sorry, I couldn't contact the AI service.");
+
+    console.error("========== ERROR ==========");
+    console.error(err);
+    console.error(err.stack);
+
+    await say("❌ Sorry, I couldn't contact the AI service.");
+
     }
-}
+    }
 
 module.exports = {
     handleMessage

@@ -36,12 +36,54 @@ async function getCommits(repo) {
         }
     });
 
-    return response.data;
+    return response.data.map(commit => ({
+    message: commit.commit.message,
+    author: commit.commit.author.name,
+    date: commit.commit.author.date,
+    sha: commit.sha.substring(0, 7)
+    }));
 
 }
+async function getPullRequests(owner, repo) {
 
+    const response = await api.get(
+        `/repos/${owner}/${repo}/pulls`,
+        {
+            params: {
+                state: "open",
+                per_page: 20
+            }
+        }
+    );
+
+    return response.data;
+}
+async function getIssues(owner, repo) {
+
+    const response = await api.get(
+        `/repos/${owner}/${repo}/issues`,
+        {
+            params: {
+                state: "open",
+                per_page: 20
+            }
+        }
+    );
+
+    return response.data
+        .filter(issue => !issue.pull_request)
+        .map(issue => ({
+            number: issue.number,
+            title: issue.title,
+            author: issue.user.login,
+            state: issue.state,
+            created_at: issue.created_at
+        }));
+}
 module.exports = {
     getProfile,
     getRepositories,
-    getCommits
+    getCommits,
+    getPullRequests,
+    getIssues
 };

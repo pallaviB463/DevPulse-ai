@@ -17,8 +17,16 @@ async function getMyProfile() {
     return response.data;
 
 }
+async function getProjects() {
+
+    const response = await api.get("/rest/api/3/project");
+
+    return response.data;
+
+}
 
 module.exports = {
-    getMyProfile
+    getMyProfile,
+    getProjects
 };
 

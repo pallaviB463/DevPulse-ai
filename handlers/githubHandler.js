@@ -1,4 +1,6 @@
 const { parseGitHubCommand } = require("../services/github/githubParser");
+const { generateDashboard } = require("../services/github/githubDashboard");
+const { dashboardBlocks } = require("../utils/slackBlocks");
 const {
     summarizeRepository
 } = require("../services/github/githubSummary");
@@ -97,6 +99,51 @@ async function handleGitHubCommand(text, say) {
         const summary = await summarizeRepository(repositoryData);
 
         await say(summary);
+
+        return true;
+    }
+    if (command === "dashboard") {
+
+        const profile = await getProfile();
+
+        const commits = await getCommits(repo);
+
+        const pulls = await getPullRequests(
+            process.env.GITHUB_USERNAME,
+            repo
+        );
+
+        const issues = await getIssues(
+            process.env.GITHUB_USERNAME,
+            repo
+        );
+
+        const dashboard = await generateDashboard({
+            profile,
+            commits,
+            pulls,
+            issues
+        });
+
+        await say({
+
+            blocks: dashboardBlocks({
+
+                repo,
+
+                owner: profile.login,
+
+                commits: commits.length,
+
+                pulls: pulls.length,
+
+                issues: issues.length,
+
+                summary: dashboard
+
+            })
+
+        });
 
         return true;
     }

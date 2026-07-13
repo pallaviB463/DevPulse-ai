@@ -1,12 +1,12 @@
 const routes = [
 
     {
-        keywords: ["github", "repo", "repository", "commit", "pull", "issue"],
+        prefix: "github",
         type: "github"
     },
 
     {
-        keywords: ["jira", "ticket", "sprint", "epic"],
+        prefix: "jira",
         type: "jira"
     }
 
@@ -14,14 +14,22 @@ const routes = [
 
 async function routeRequest(message) {
 
-    const text = message.toLowerCase();
+    const text = message.toLowerCase().trim();
 
     for (const route of routes) {
 
-        if (route.keywords.some(word => text.includes(word))) {
+        if (text.startsWith(route.prefix)) {
 
             return {
                 type: route.type,
+                prompt: message
+            };
+
+        }
+        if (text.startsWith("standup")) {
+
+            return {
+                type: "standup",
                 prompt: message
             };
 
@@ -35,6 +43,7 @@ async function routeRequest(message) {
     };
 
 }
+
 
 module.exports = {
     routeRequest

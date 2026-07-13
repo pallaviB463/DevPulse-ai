@@ -24,9 +24,22 @@ async function getProjects() {
     return response.data;
 
 }
+async function getMyIssues() {
 
+    const response = await api.post(
+        "/rest/api/3/search/jql",
+        {
+            jql: "assignee=currentUser() AND resolution=Unresolved ORDER BY priority DESC",
+            maxResults: 20
+        }
+    );
+
+    return response.data.issues;
+
+}
 module.exports = {
     getMyProfile,
-    getProjects
+    getProjects,
+    getMyIssues
 };
 

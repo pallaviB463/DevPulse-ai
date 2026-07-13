@@ -25,8 +25,33 @@ function formatProjects(projects) {
     return output;
 
 }
+function formatIssues(issues) {
+
+    if (!issues.length) {
+
+        return "✅ No open issues assigned to you.";
+
+    }
+
+    let output = "📋 *My Jira Issues*\n\n";
+
+    issues.forEach(issue => {
+
+        output +=
+`• *${issue.key}*
+  ${issue.fields.summary}
+  Priority: ${issue.fields.priority?.name || "None"}
+
+`;
+
+    });
+
+    return output;
+
+}
 
 module.exports = {
     formatProfile,
-    formatProjects
+    formatProjects,
+    formatIssues
 };

@@ -1,8 +1,10 @@
 const { parseJiraCommand } = require("../services/jira/jiraParser");
-const { getMyProfile,getProjects } = require("../services/jira/jiraService");
+const { getMyProfile,getProjects, getMyIssues} = require("../services/jira/jiraService");
+const { summarizeJira } = require("../services/jira/jiraSummary");
 const {
     formatProfile,
-    formatProjects
+    formatProjects,
+    formatIssues
 } = require("../utils/jiraFormatter");
 
 async function handleJiraCommand(text, say) {
@@ -26,6 +28,33 @@ async function handleJiraCommand(text, say) {
 
         return true;
     }
+    if (command === "issues") {
+
+        const issues = await getMyIssues();
+
+        await say(formatIssues(issues));
+
+        return true;
+
+    }
+    if (command === "summary") {
+
+        const profile = await getMyProfile();
+
+        const projects = await getProjects();
+
+        const issues = await getMyIssues();
+
+        const summary = await summarizeJira({
+            profile,
+            projects,
+            issues
+        });
+
+        await say(summary);
+
+        return true;
+}
 
     return false;
 

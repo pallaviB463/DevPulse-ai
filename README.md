@@ -1,14 +1,9 @@
 # DevPulse AI
 ![Node.js](https://img.shields.io/badge/Node.js-22-green)
-
 ![Slack](https://img.shields.io/badge/Slack-Bolt-blue)
-
 ![GitHub API](https://img.shields.io/badge/API-GitHub-black)
-
 ![Jira API](https://img.shields.io/badge/API-Jira-blue)
-
 ![OpenRouter](https://img.shields.io/badge/AI-OpenRouter-purple)
-
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
 DevPulse AI is an AI-powered Slack assistant that integrates GitHub, Jira, and Large Language Models to help development teams monitor repositories, analyze project health, and retrieve project insights using natural language commands.

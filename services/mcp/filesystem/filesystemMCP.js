@@ -1,6 +1,9 @@
 const fs = require("fs");
 const path = require("path");
 
+/**
+ * Reads a file from the current project workspace.
+ */
 async function readProjectFile(filename) {
 
     try {
@@ -17,7 +20,7 @@ async function readProjectFile(filename) {
 
     } catch (err) {
 
-        console.error(err);
+        console.error("Failed to read project file:", err.message || err);
 
         return null;
 

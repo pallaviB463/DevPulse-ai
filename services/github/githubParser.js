@@ -1,3 +1,6 @@
+/**
+ * Parses a GitHub command into its command and repository parts.
+ */
 function parseGitHubCommand(text) {
 
     const parts = text.trim().split(/\s+/);

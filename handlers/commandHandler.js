@@ -1,7 +1,8 @@
+/**
+ * Handles built-in Slack commands.
+ */
 async function handleCommand(text) {
-
     switch (text) {
-
         case "hello":
             return `👋 Hello!
 

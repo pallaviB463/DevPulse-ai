@@ -1,4 +1,5 @@
 const express = require("express");
+
 const router = express.Router();
 
 const {
@@ -8,32 +9,23 @@ const {
     getPullRequests
 } = require("../services/github/githubService");
 
-
 router.get("/profile", async (req, res) => {
-
     try {
-
         const profile = await getProfile();
 
         res.json(profile);
-
     } catch (err) {
-
-        console.error(err.response?.data || err.message);
+        console.error("GitHub profile request failed:", err.response?.data || err.message);
 
         res.status(500).json({
             error: "Unable to contact GitHub"
         });
-
     }
-
 });
 
 router.get("/repos", async (req, res) => {
-
     try {
-
-       const repos = await getRepositories();
+        const repos = await getRepositories();
 
         const simplified = repos.map(repo => ({
             name: repo.name,
@@ -46,54 +38,38 @@ router.get("/repos", async (req, res) => {
         }));
 
         res.json(simplified);
-
     } catch (err) {
-
-        console.error(err.response?.data || err.message);
+        console.error("GitHub repositories request failed:", err.response?.data || err.message);
 
         res.status(500).json({
             error: "Unable to fetch repositories"
         });
-
     }
-
 });
 
 router.get("/commits/:repo", async (req, res) => {
-
     try {
-
         const commits = await getCommits(req.params.repo);
 
         const simplified = commits.map(commit => ({
-
             author: commit.commit.author.name,
-
             message: commit.commit.message,
-
             date: commit.commit.author.date,
-
             sha: commit.sha.substring(0, 7)
-
         }));
 
         res.json(simplified);
-
     } catch (err) {
-
-        console.error(err.response?.data || err.message);
+        console.error("GitHub commits request failed:", err.response?.data || err.message);
 
         res.status(500).json({
             error: "Unable to fetch commits"
         });
-
     }
-
 });
+
 router.get("/pulls/:owner/:repo", async (req, res) => {
-
     try {
-
         const { owner, repo } = req.params;
 
         const pulls = await getPullRequests(owner, repo);
@@ -108,17 +84,13 @@ router.get("/pulls/:owner/:repo", async (req, res) => {
         }));
 
         res.json(simplified);
-
     } catch (err) {
-
-        console.error(err.response?.data || err.message);
+        console.error("GitHub pull request request failed:", err.response?.data || err.message);
 
         res.status(500).json({
             error: "Unable to fetch pull requests"
         });
-
     }
-
 });
 
 module.exports = router;

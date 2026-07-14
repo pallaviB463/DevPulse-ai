@@ -10,22 +10,29 @@ const api = axios.create({
         Accept: "application/json"
     }
 });
-async function getMyProfile() {
 
+/**
+ * Fetches the authenticated Jira profile.
+ */
+async function getMyProfile() {
     const response = await api.get("/rest/api/3/myself");
 
     return response.data;
-
 }
-async function getProjects() {
 
+/**
+ * Lists Jira projects visible to the authenticated user.
+ */
+async function getProjects() {
     const response = await api.get("/rest/api/3/project");
 
     return response.data;
-
 }
-async function getMyIssues() {
 
+/**
+ * Fetches unresolved Jira issues assigned to the current user.
+ */
+async function getMyIssues() {
     const response = await api.post(
         "/rest/api/3/search/jql",
         {

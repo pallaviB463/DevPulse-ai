@@ -9,16 +9,16 @@ const { handleHealth } = require("./healthHandler");
 
 const { classifyIntent } = require("../services/ai/intentClassifier");
 
+/**
+ * Routes incoming Slack messages to built-in commands, AI replies, or service handlers.
+ */
 async function handleMessage({ message, say }) {
-
-    // Ignore bot messages
     if (message.subtype === "bot_message" || message.bot_id) {
         return;
     }
 
     let text = message.text.trim();
 
-    // Built-in commands
     const commandResponse = await handleCommand(text.toLowerCase());
 
     if (commandResponse) {
@@ -28,12 +28,9 @@ async function handleMessage({ message, say }) {
 
     await say("🤖 Thinking...");
 
-    // AI intent classification
     const intent = classifyIntent(text);
 
-    // Keep repo/project names if present
     if (intent) {
-
         const words = text.split(/\s+/);
 
         if (words.length > 1) {
@@ -44,8 +41,6 @@ async function handleMessage({ message, say }) {
     }
 
     try {
-
-        // Special Project Health command
         if (
             text.toLowerCase().startsWith("project health") ||
             text.toLowerCase().startsWith("github dashboard")
@@ -60,10 +55,7 @@ async function handleMessage({ message, say }) {
 
         const request = await routeRequest(text);
 
-        console.log("Request:", request);
-
         if (request.type === "ai") {
-
             const reply = await askAI(request.prompt);
 
             await say(reply);
@@ -74,7 +66,6 @@ async function handleMessage({ message, say }) {
         switch (request.type) {
 
             case "github": {
-
                 const handled = await handleGitHubCommand(text.toLowerCase(), say);
 
                 if (!handled) {
@@ -85,7 +76,6 @@ async function handleMessage({ message, say }) {
             }
 
             case "jira": {
-
                 const handled = await handleJiraCommand(text.toLowerCase(), say);
 
                 if (!handled) {
@@ -96,14 +86,12 @@ async function handleMessage({ message, say }) {
             }
 
             case "standup": {
-
                 await handleStandup(say);
 
                 break;
             }
 
             default: {
-
                 const reply = await askAI(request.prompt);
 
                 await say(reply);
@@ -111,13 +99,7 @@ async function handleMessage({ message, say }) {
         }
 
     } catch (err) {
-
-        console.error("========== ERROR ==========");
-        console.error(err);
-        console.error(err.response?.data);
-        console.error(err.message);
-        console.error(err.stack);
-        console.error("===========================");
+        console.error("Failed to process Slack message:", err.response?.data || err.message || err);
 
         await say("❌ Sorry, I couldn't contact the AI service.");
     }

@@ -9,7 +9,7 @@ const {
     getRepositories,
     getCommits,
     getPullRequests,
-    getIssues 
+    getIssues
 } = require("../services/github/githubService");
 
 const {
@@ -20,13 +20,29 @@ const {
     formatIssues
 } = require("../utils/githubFormatter");
 
+async function loadGitHubSnapshot(repo) {
+    const profile = await getProfile();
+    const [commits, pulls, issues] = await Promise.all([
+        getCommits(repo),
+        getPullRequests(process.env.GITHUB_USERNAME, repo),
+        getIssues(process.env.GITHUB_USERNAME, repo)
+    ]);
+
+    return {
+        profile,
+        commits,
+        pulls,
+        issues
+    };
+}
+
+/**
+ * Handles GitHub-related Slack commands.
+ */
 async function handleGitHubCommand(text, say) {
     const { command, repo } = parseGitHubCommand(text);
-    console.log("Command:", command);
-    console.log("Repo:", repo);
 
     if (command === "profile") {
-
         const profile = await getProfile();
 
         await say(formatProfile(profile));
@@ -35,7 +51,6 @@ async function handleGitHubCommand(text, say) {
     }
 
     if (command === "repos") {
-
         const repos = await getRepositories();
 
         await say(formatRepositories(repos));
@@ -44,15 +59,14 @@ async function handleGitHubCommand(text, say) {
     }
 
     if (command === "commits") {
-
         const commits = await getCommits(repo);
 
         await say(formatCommits(commits));
 
         return true;
     }
-    if (command === "pulls") {
 
+    if (command === "pulls") {
         const pulls = await getPullRequests(
             process.env.GITHUB_USERNAME,
             repo
@@ -62,8 +76,8 @@ async function handleGitHubCommand(text, say) {
 
         return true;
     }
-    if (command === "issues") {
 
+    if (command === "issues") {
         const issues = await getIssues(
             process.env.GITHUB_USERNAME,
             repo
@@ -73,76 +87,29 @@ async function handleGitHubCommand(text, say) {
 
         return true;
     }
+
     if (command === "summary") {
-
-        const profile = await getProfile();
-
-        const commits = await getCommits(repo);
-
-        const pulls = await getPullRequests(
-            process.env.GITHUB_USERNAME,
-            repo
-        );
-
-        const issues = await getIssues(
-            process.env.GITHUB_USERNAME,
-            repo
-        );
-
-        const repositoryData = {
-            profile,
-            commits,
-            pulls,
-            issues
-        };
-
+        const repositoryData = await loadGitHubSnapshot(repo);
         const summary = await summarizeRepository(repositoryData);
 
         await say(summary);
 
         return true;
     }
+
     if (command === "dashboard") {
-
-        const profile = await getProfile();
-
-        const commits = await getCommits(repo);
-
-        const pulls = await getPullRequests(
-            process.env.GITHUB_USERNAME,
-            repo
-        );
-
-        const issues = await getIssues(
-            process.env.GITHUB_USERNAME,
-            repo
-        );
-
-        const dashboard = await generateDashboard({
-            profile,
-            commits,
-            pulls,
-            issues
-        });
+        const repositoryData = await loadGitHubSnapshot(repo);
+        const dashboard = await generateDashboard(repositoryData);
 
         await say({
-
             blocks: dashboardBlocks({
-
                 repo,
-
-                owner: profile.login,
-
-                commits: commits.length,
-
-                pulls: pulls.length,
-
-                issues: issues.length,
-
+                owner: repositoryData.profile.login,
+                commits: repositoryData.commits.length,
+                pulls: repositoryData.pulls.length,
+                issues: repositoryData.issues.length,
                 summary: dashboard
-
             })
-
         });
 
         return true;
@@ -150,8 +117,6 @@ async function handleGitHubCommand(text, say) {
 
     return false;
 }
-
-
 
 module.exports = {
     handleGitHubCommand

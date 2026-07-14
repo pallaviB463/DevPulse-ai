@@ -1,5 +1,7 @@
+/**
+ * Infers a structured command intent from a natural-language Slack message.
+ */
 function classifyIntent(message) {
-
     const text = message.toLowerCase();
 
     if (

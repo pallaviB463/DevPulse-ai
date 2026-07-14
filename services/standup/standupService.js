@@ -2,8 +2,10 @@ const { getCommits } = require("../github/githubService");
 const { getMyIssues } = require("../jira/jiraService");
 const { askAI } = require("../ai/provider");
 
+/**
+ * Builds the daily standup summary from GitHub and Jira activity.
+ */
 async function generateStandup() {
-
     const repo = process.env.DEFAULT_REPOSITORY;
 
     const commits = await getCommits(repo);

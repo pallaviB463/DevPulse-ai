@@ -1,7 +1,9 @@
 const { askAI } = require("../ai/provider");
 
+/**
+ * Generates a concise GitHub dashboard summary for Slack.
+ */
 async function generateDashboard(data) {
-
     const prompt = `
 You are DevPulse AI.
 

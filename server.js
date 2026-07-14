@@ -1,8 +1,9 @@
 require("dotenv").config();
-const healthRoute = require("./routes/health");
 const express = require("express");
-const githubRoute = require("./routes/github");
+
 const aiRoute = require("./routes/ai");
+const githubRoute = require("./routes/github");
+const healthRoute = require("./routes/health");
 const mcpRoute = require("./routes/mcp");
 const jiraRoutes = require("./routes/jira");
 
@@ -32,10 +33,6 @@ app.get("/", (req, res) => {
 });
 
 app.listen(PORT, () => {
-
-    console.log("================================");
-    console.log(`🌐 Express Server Running`);
-    console.log(`http://localhost:${PORT}`);
-    console.log("================================");
+    console.info(`Express server listening on http://localhost:${PORT}`);
 
 });

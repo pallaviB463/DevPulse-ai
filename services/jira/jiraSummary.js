@@ -1,7 +1,9 @@
 const { askAI } = require("../ai/provider");
 
+/**
+ * Summarizes Jira project data in a Slack-friendly format.
+ */
 async function summarizeJira(data) {
-
     const prompt = `
 You are DevPulse AI.
 

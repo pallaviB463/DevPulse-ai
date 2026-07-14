@@ -1,7 +1,9 @@
 const { askAI } = require("../ai/provider");
 
+/**
+ * Summarizes GitHub repository data in a Slack-friendly format.
+ */
 async function summarizeRepository(data) {
-
     const prompt = `
 You are DevPulse AI.
 
